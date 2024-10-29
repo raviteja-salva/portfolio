@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FaCode, FaUsers, FaLightbulb, FaRocket, FaDatabase, FaPuzzlePiece, FaChartLine, FaShieldAlt } from 'react-icons/fa';
 
@@ -13,87 +13,94 @@ const reasons = [
   { icon: FaShieldAlt, title: "Security-Conscious Developer", text: "Prioritize robust security practices in all stages of development to protect sensitive data" },
 ];
 
-const Container = styled.div`
+const slideInFromLeft = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
+const Container = styled.section`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 3rem 1rem;
+  padding: 4rem 2rem;
   background-color: transparent;
 `;
 
 const Title = styled.h2`
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 3rem;
+  font-weight: 800;
   text-align: center;
-  color: #60a5fa;
-  margin-bottom: 3rem;
+  color: #64ffda;
+  margin-bottom: 4rem;
   position: relative;
-
+  
   &::after {
     content: '';
     position: absolute;
-    bottom: -10px;
+    bottom: -12px;
     left: 50%;
     transform: translateX(-50%);
-    width: 50px;
-    height: 3px;
-    background-color: #60a5fa;
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #64ffda, transparent);
   }
 `;
 
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+const ReasonsList = styled.ul`
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
 `;
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+const ReasonItem = styled.li`
+  opacity: 0;
+  animation: ${slideInFromLeft} 0.5s ease-out forwards;
+  animation-delay: ${props => props.index * 0.1}s;
 `;
 
-const ReasonCard = styled.div`
-  background-color: #1e293b;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+const ReasonContent = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
   transition: all 0.3s ease;
-  animation: ${fadeIn} 0.5s ease-out;
-  animation-fill-mode: both;
-  animation-delay: ${props => props.index * 0.1}s;
-
+  background-color: rgba(100, 255, 218, 0.05);
+  
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background-color: rgba(100, 255, 218, 0.1);
+    transform: translateX(10px);
   }
 `;
 
 const IconWrapper = styled.div`
-  font-size: 2.5rem;
-  color: #60a5fa;
-  margin-bottom: 1rem;
-  transition: all 0.3s ease;
+  font-size: 1.5rem;
+  color: #64ffda;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+`;
 
-  ${ReasonCard}:hover & {
-    transform: scale(1.1);
-  }
+const TextContent = styled.div`
+  flex: 1;
 `;
 
 const ReasonTitle = styled.h3`
   font-size: 1.25rem;
   font-weight: bold;
-  color: #f1f5f9;
+  color: #64ffda;
   margin-bottom: 0.5rem;
 `;
 
 const ReasonText = styled.p`
   font-size: 1rem;
-  color: #9ca3af;
+  color: #8892b0;
   line-height: 1.6;
 `;
 
@@ -101,17 +108,21 @@ const WhyHireMe = () => {
   return (
     <Container>
       <Title>Why Hire Me?</Title>
-      <Grid>
+      <ReasonsList>
         {reasons.map((reason, index) => (
-          <ReasonCard key={index} index={index}>
-            <IconWrapper>
-              <reason.icon />
-            </IconWrapper>
-            <ReasonTitle>{reason.title}</ReasonTitle>
-            <ReasonText>{reason.text}</ReasonText>
-          </ReasonCard>
+          <ReasonItem key={index} index={index}>
+            <ReasonContent>
+              <IconWrapper>
+                <reason.icon />
+              </IconWrapper>
+              <TextContent>
+                <ReasonTitle>{reason.title}</ReasonTitle>
+                <ReasonText>{reason.text}</ReasonText>
+              </TextContent>
+            </ReasonContent>
+          </ReasonItem>
         ))}
-      </Grid>
+      </ReasonsList>
     </Container>
   );
 };

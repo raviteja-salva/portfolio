@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FaExternalLinkAlt, FaGithub, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import styled from 'styled-components';
+import React, { useState } from 'react';
+import styled, { keyframes } from 'styled-components';
+import { FaExternalLinkAlt, FaGithub } from 'react-icons/fa';
+
+//Hi
 
 const projects = [
   {
@@ -72,105 +74,101 @@ const projects = [
   }
 ];
 
-
-const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 1rem;
-  background-color: #0a192f;
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `;
 
-const Title = styled.h2`
-  font-size: 2.8rem;
-  font-weight: bold;
+const Container = styled.section`
+  padding: 6rem 2rem;
+  background: transparent;
+  min-height: 100vh;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 3rem;
+  font-weight: 800;
   text-align: center;
-  color: #60a5fa;
-  margin-bottom: 3rem;
+  color: #64ffda;
+  margin-bottom: 4rem;
   position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #64ffda, transparent);
+  }
+`;
+
+const ProjectsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const ProjectCard = styled.article`
+  position: relative;
+  background: rgba(17, 34, 64, 0.8);
+  border-radius: 1rem;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(100, 255, 218, 0.1);
+  transition: all 0.4s ease-in-out;
+  animation: ${fadeIn} 0.6s ease-out forwards;
+  animation-delay: ${props => props.$index * 0.2}s;
+  opacity: 0;
+
+  &:hover {
+    transform: translateY(-8px);
+    border-color: rgba(100, 255, 218, 0.3);
+    box-shadow: 0 10px 30px -15px rgba(100, 255, 218, 0.2);
+  }
+`;
+
+const ProjectImage = styled.div`
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
 
   &::after {
     content: '';
     position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 3px;
-    background-color: #60a5fa;
-  }
-`;
-
-const ProjectsContainer = styled.div`
-  position: relative;
-  width: 100%;
-  max-width: 1200px; // Adjust this to match your card width
-  margin: 0 auto;
-`;
-
-const ProjectsScroller = styled.div`
-  display: flex;
-  overflow-x: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-`;
-
-const ProjectCard = styled.div`
-  flex: 0 0 100%;
-  width: 100%;
-  scroll-snap-align: start;
-  background-color: #1e293b;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(96, 165, 250, 0.2);
-  }
-`;
-
-const ScrollButton = styled.button`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(96, 165, 250, 0.8);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  z-index: 10;
-
-  &:hover {
-    background-color: rgba(59, 130, 246, 0.9);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent, rgba(10, 25, 47, 0.9));
   }
 
-  &:disabled {
-    background-color: rgba(96, 165, 250, 0.4);
-    cursor: not-allowed;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
   }
-`;
 
-const LeftScrollButton = styled(ScrollButton)`
-  left: -50px; // Adjust this value as needed
-`;
-
-const RightScrollButton = styled(ScrollButton)`
-  right: -50px; // Adjust this value as needed
-`;
-const ProjectImage = styled.img`
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-bottom: 3px solid #60a5fa;
-  border-radius:10px;
+  ${ProjectCard}:hover & img {
+    transform: scale(1.1);
+  }
 `;
 
 const ProjectContent = styled.div`
@@ -179,32 +177,16 @@ const ProjectContent = styled.div`
 
 const ProjectTitle = styled.h3`
   font-size: 1.5rem;
-  font-weight: bold;
+  color: #e6f1ff;
   margin-bottom: 1rem;
-  color: #60a5fa;
+  font-weight: 600;
 `;
 
 const ProjectDescription = styled.p`
-  color: #a8b2d1;
-  margin-bottom: 1.5rem;
+  color: #8892b0;
+  font-size: 0.9rem;
   line-height: 1.6;
-`;
-
-const FeatureList = styled.ul`
-  list-style-type: none;
-  padding-left: 0;
   margin-bottom: 1.5rem;
-`;
-
-const FeatureItem = styled.li`
-  color: #a8b2d1;
-  margin-bottom: 0.5rem;
-  
-  &:before {
-    content: '▹';
-    color: #60a5fa;
-    margin-right: 0.5rem;
-  }
 `;
 
 const TechStack = styled.div`
@@ -215,178 +197,119 @@ const TechStack = styled.div`
 `;
 
 const TechTag = styled.span`
-  background-color: #293548;
-  color: #60a5fa;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
+  background: rgba(100, 255, 218, 0.1);
+  color: #64ffda;
+  padding: 0.35rem 0.75rem;
+  border-radius: 99px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(100, 255, 218, 0.2);
+  }
 `;
 
 const ProjectLinks = styled.div`
   display: flex;
   gap: 1rem;
+  margin-top: auto;
 `;
 
-const ProjectLink = styled.a`
+const LinkButton = styled.a`
   display: inline-flex;
   align-items: center;
-  background-color: #60a5fa;
-  color: #0a192f;
-  font-weight: bold;
+  gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 9999px;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 500;
   text-decoration: none;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
+  background: ${props => props.$primary ? 'rgba(100, 255, 218, 0.1)' : 'transparent'};
+  color: #64ffda;
+  border: 1px solid rgba(100, 255, 218, 0.3);
 
   &:hover {
-    background-color: #3b82f6;
+    background: rgba(100, 255, 218, 0.2);
     transform: translateY(-2px);
   }
 
   svg {
-    margin-left: 0.5rem;
+    font-size: 0.9rem;
   }
 `;
 
-const Credentials = styled.p`
-  color: #a8b2d1;
-  font-size: 0.875rem;
+const Credentials = styled.div`
   margin-top: 1rem;
-  font-style: italic;
+  padding: 0.75rem;
+  background: rgba(100, 255, 218, 0.05);
+  border-radius: 0.5rem;
+  border: 1px dashed rgba(100, 255, 218, 0.2);
+
+  p {
+    color: #8892b0;
+    font-size: 0.8rem;
+    margin: 0;
+    
+    span {
+      color: #64ffda;
+      font-weight: 500;
+    }
+  }
 `;
 
 const Projects = () => {
-    const scrollRef = useRef(null);
-    const [currentIndex, setCurrentIndex] = useState(0);
-  
-    const handleScroll = (direction) => {
-      const container = scrollRef.current;
-      if (container) {
-        const newIndex = direction === 'left' 
-          ? Math.max(0, currentIndex - 1) 
-          : Math.min(projects.length - 1, currentIndex + 1);
-        
-        container.scrollTo({ left: newIndex * container.offsetWidth, behavior: 'smooth' });
-        setCurrentIndex(newIndex);
-      }
-    };
-  
-    useEffect(() => {
-      const container = scrollRef.current;
-      if (container) {
-        const handleScrollEnd = () => {
-          const newIndex = Math.round(container.scrollLeft / container.offsetWidth);
-          setCurrentIndex(newIndex);
-        };
-        
-        container.addEventListener('scrollend', handleScrollEnd);
-        return () => container.removeEventListener('scrollend', handleScrollEnd);
-      }
-    }, []);
-  
-    return (
-      <Container>
-        <Title>Projects</Title>
-        <ProjectsContainer>
-          <LeftScrollButton 
-            onClick={() => handleScroll('left')}
-            disabled={currentIndex === 0}
-          >
-            <FaChevronLeft />
-          </LeftScrollButton>
-          <ProjectsScroller ref={scrollRef}>
-            {projects.map((project, index) => (
-              <ProjectCard key={index}>
-                 <ProjectContent>
-            <ProjectImage src={project.image} />      
-            <ProjectTitle>{project.name}</ProjectTitle>
-            <ProjectDescription>{project.description}</ProjectDescription>
-            <FeatureList>
-              {project.features.map((feature, i) => (
-                <FeatureItem key={i}>{feature}</FeatureItem>
-              ))}
-            </FeatureList>
-            <TechStack>
-              {project.technologies.map((tech, i) => (
-                <TechTag key={i}>{tech}</TechTag>
-              ))}
-            </TechStack>
-            <ProjectLinks>
-              <ProjectLink 
-                href={project.deployedLink} 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                Live Demo <FaExternalLinkAlt />
-              </ProjectLink>
-              <ProjectLink 
-                href={project.githubLink} 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                GitHub <FaGithub />
-              </ProjectLink>
-            </ProjectLinks>
-            {project.credentials && (
-              <Credentials>
-                Demo Credentials: Username: {project.credentials.username}, Password: {project.credentials.password}
-              </Credentials>
-            )}
-          </ProjectContent>
-              </ProjectCard>
-            ))}
-          </ProjectsScroller>
-          <RightScrollButton 
-            onClick={() => handleScroll('right')}
-            disabled={currentIndex === projects.length - 1}
-          >
-            <FaChevronRight />
-          </RightScrollButton>
-        </ProjectsContainer>
-      </Container>
-    );
-  };
-  
-  export default Projects;
-  /* 
+  return (
+    <Container>
+      <SectionTitle>Featured Projects</SectionTitle>
+      <ProjectsGrid>
+        {projects.map((project, index) => (
+          <ProjectCard key={index} $index={index}>
+            <ProjectImage>
+              <img src={project.image} alt={project.name} />
+            </ProjectImage>
+            <ProjectContent>
+              <ProjectTitle>{project.name}</ProjectTitle>
+              <ProjectDescription>{project.description}</ProjectDescription>
+              <TechStack>
+                {project.technologies.map((tech, i) => (
+                  <TechTag key={i}>{tech}</TechTag>
+                ))}
+              </TechStack>
+              <ProjectLinks>
+                <LinkButton
+                  href={project.deployedLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  $primary
+                >
+                  <FaExternalLinkAlt /> Live Demo
+                </LinkButton>
+                <LinkButton
+                  href={project.githubLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FaGithub /> Code
+                </LinkButton>
+              </ProjectLinks>
+              {project.credentials && (
+                <Credentials>
+                  <p>
+                    Demo Credentials: <br />
+                    <span>Username:</span> {project.credentials.username} <br />
+                    <span>Password:</span> {project.credentials.password}
+                  </p>
+                </Credentials>
+              )}
+            </ProjectContent>
+          </ProjectCard>
+        ))}
+      </ProjectsGrid>
+    </Container>
+  );
+};
 
-    <ProjectContent>
-            <ProjectImage src={project.image} />      
-            <ProjectTitle>{project.name}</ProjectTitle>
-            <ProjectDescription>{project.description}</ProjectDescription>
-            <FeatureList>
-              {project.features.map((feature, i) => (
-                <FeatureItem key={i}>{feature}</FeatureItem>
-              ))}
-            </FeatureList>
-            <TechStack>
-              {project.technologies.map((tech, i) => (
-                <TechTag key={i}>{tech}</TechTag>
-              ))}
-            </TechStack>
-            <ProjectLinks>
-              <ProjectLink 
-                href={project.deployedLink} 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                Live Demo <FaExternalLinkAlt />
-              </ProjectLink>
-              <ProjectLink 
-                href={project.githubLink} 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                GitHub <FaGithub />
-              </ProjectLink>
-            </ProjectLinks>
-            {project.credentials && (
-              <Credentials>
-                Demo Credentials: Username: {project.credentials.username}, Password: {project.credentials.password}
-              </Credentials>
-            )}
-          </ProjectContent>
-
-
-  */
+export default Projects;
